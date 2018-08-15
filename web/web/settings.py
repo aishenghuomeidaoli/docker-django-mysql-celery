@@ -75,10 +75,10 @@ WSGI_APPLICATION = 'web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'mysql',
+        'HOST': os.environ.get('MYSQL_HOST', 'mysql'),
         'USER': 'root',
-        'PASSWORD': 'password',
-        'NAME': 'mydb',
+        'PASSWORD': os.environ.get('MYSQL_ROOT_PASSWORD', 'password'),
+        'NAME': os.environ.get('MYSQL_DATABASE', 'mydb'),
         'PORT': '3306',
         'CHARSET': 'utf-8',
     }
@@ -87,7 +87,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': ['redis:6379'],
+        'LOCATION': ['%s:6379' % os.environ.get('REDIS_HOST', 'redis')],
         'OPTIONS': {
             'DB': 0
         }

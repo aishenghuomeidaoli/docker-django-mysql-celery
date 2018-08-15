@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core import serializers
 from django.http.response import JsonResponse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 
 from .models import MathTask
 from .tasks import math

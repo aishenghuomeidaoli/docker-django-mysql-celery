@@ -25,8 +25,13 @@ If you have a mysql server outside host machine, ignore this and change django s
 docker-compose -f docker-compose-mysql.yaml up -d
 
 mysql -u root -h 0.0.0.0 -p
+```
 
-mysql> CREATE DATABASE mydb CHARACTER SET utf8 COLLATE utf8_general_ci;
+Execute SQL to create database and set time zone.
+
+```
+CREATE DATABASE mydb CHARACTER SET utf8 COLLATE utf8_general_ci;
+SET time_zone = 'Asia/Shanghai';
 ```
 
 ### start project
@@ -46,3 +51,8 @@ This will create 2 web containers.
 docker-compose up -d --scale web=2
 ```
 
+### delete all containers
+
+```
+docker-compose down
+```

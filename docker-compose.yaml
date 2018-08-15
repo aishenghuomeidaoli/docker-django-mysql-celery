@@ -12,8 +12,8 @@ services:
 # bind port and set root host % to connect from host machine
     container_name: mysql
     image: mysql/mysql-server:5.7
-    ports:
-      - 3307:3306
+#    ports:
+#      - 3307:3306
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_ROOT_HOST=%
@@ -30,7 +30,10 @@ services:
     working_dir: /usr/src/app
     command: sh ./run.sh
     environment:
+      - MYSQL_HOST=mysql
       - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=mydb
+      - REDIS_HOST=redis
     volumes:
       - ./web/:/usr/src/app
     depends_on:
@@ -43,7 +46,10 @@ services:
     working_dir: /usr/src/app
     command: celery --app=web.celery:app worker --loglevel=INFO
     environment:
+      - MYSQL_HOST=mysql
       - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=mydb
+      - REDIS_HOST=redis
     volumes:
       - ./web/:/usr/src/app
     depends_on:
