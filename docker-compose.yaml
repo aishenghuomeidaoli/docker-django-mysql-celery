@@ -30,6 +30,7 @@ services:
     working_dir: /usr/src/app
     command: sh ./run.sh
     environment:
+      - DJANGO_SECRET_KEY=secret_key
       - MYSQL_HOST=mysql
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=mydb
@@ -46,6 +47,7 @@ services:
     working_dir: /usr/src/app
     command: celery --app=web.celery:app worker --loglevel=INFO
     environment:
+      - DJANGO_SECRET_KEY=secret_key
       - MYSQL_HOST=mysql
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=mydb
