@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Docker Django Mysql Celery Project</title>
+</head>
+<body>
+<div>
+    {% if msg %}
+    <div>{{msg}}</div>
+    {% endif %}
+    <form method="post" action="/">
+        {% csrf_token %}
+        <input name="x" type="number" placeholder="input number">
+        <select name="task_type">
+            <option value="add">+</option>
+            <option value="minus">-</option>
+            <option value="multiply">*</option>
+            <option value="divide">/</option>
+        </select>
+        <input name="y" type="number" placeholder="input number">
+        <input type="submit" value="create a math task">
+    </form>
+    <br>
+    <div>
+        <table border="0">
+            <thead>
+            <tr>
+                <td>task id</td>
+                <td>x</td>
+                <td>task type</td>
+                <td>y</td>
+                <td>result</td>
+                <td>task status</td>
+                <td>create time</td>
+                <td>update time</td>
+            </tr>
+            </thead>
+            <tbody id="tasks">
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function refreshTasks() {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                let responseData = JSON.parse(httpRequest.responseText);
+                let html = '';
+                for (let i = 0; i < responseData.data.length; i++) {
+                    let item = responseData.data[i]
+                    html = html +
+                        '<tr>' +
+                        '<td>' + item.pk + '</td>' +
+                        '<td>' + item.fields.x + '</td>' +
+                        '<td>' + item.fields.task_type + '</td>' +
+                        '<td>' + item.fields.y + '</td>' +
+                        '<td>' + item.fields.result + '</td>' +
+                        '<td>' + item.fields.status + '</td>' +
+                        '<td>' + item.fields.create_time + '</td>' +
+                        '<td>' + item.fields.update_time + '</td>' +
+                        '</tr>'
+                }
+                document.getElementById("tasks").innerHTML = html
+            }
+        };
+        httpRequest.open("GET", "/app/query/", true);
+        httpRequest.send();
+    }
+    refreshTasks()
+    setInterval(refreshTasks, 1000)
+</script>
+</body>
+</html>

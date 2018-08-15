@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  redis:
+    container_name: redis
+    image: redis
+#    ports:
+#      - 6379:6379
+
+  mysql:
+# use mysql-server 5.7 to ensure success accessing from host machine
+# bind port and set root host % to connect from host machine
+    container_name: mysql
+    image: mysql/mysql-server:5.7
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_ROOT_HOST=%
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  web:
+# common image based on ubuntu:18.04 with necessary software .e.g python3.6, mysql-client...
+    image: aishenghuomeidaoli/django:v4
+#    build:
+#      context: ./web
+    ports:
+      - 8000
+    working_dir: /usr/src/app
+    command: sh ./run.sh
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - ./web/:/usr/src/app
+    depends_on:
+      - mysql
+      - redis
+
+  celery:
+    container_name: celery
+    image: aishenghuomeidaoli/django:v4
+    working_dir: /usr/src/app
+    command: celery --app=web.celery:app worker --loglevel=INFO
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - ./web/:/usr/src/app
+    depends_on:
+      - mysql
+      - redis
+
+  haproxy:
+    image: dockercloud/haproxy
+    ports:
+      - 80:80
+    links:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
